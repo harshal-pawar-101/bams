@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAMS 1st Pro Study Tracker</title>
+    <style>
+        /* CSS for BAMS Theme and Layout */
+        :root {
+            --primary-color: #4a148c; /* Deep Purple - intellectual/spiritual */
+            --secondary-color: #f1f8e9; /* Light Green/Cream - natural/Ayurvedic */
+            --accent-color: #ffb300; /* Amber/Saffron - energy/knowledge */
+            --text-color: #333;
+            --font-family: 'Georgia', serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll when menu is off-screen */
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative; /* For positioning the menu button */
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        
+        /* --- New Menu Button Styling --- */
+        .menu-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            z-index: 1001; /* Above the header content */
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .menu-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Updated Menu Styling (Sidebar) --- */
+        .subject-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color: var(--primary-color);
+            padding-top: 80px; /* Space below the header area */
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            transform: translateX(-250px); /* Hidden by default */
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+        }
+        
+        .subject-menu.open {
+            transform: translateX(0);
+        }
+
+        .subject-card {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .subject-card:hover, .subject-card.active {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+        }
+
+        .subject-card h2 {
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: normal;
+        }
+        
+        /* --- Content Area Styling --- */
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        #content-area {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-height: 70vh;
+        }
+
+        #content-area h3 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        /* Topics and Progress Bar (Styles from previous version - kept for functionality) */
+        .topic-container {
+            margin-bottom: 25px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .topic-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .progress-bar-container {
+            width: 150px;
+            height: 10px;
+            background-color: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-left: 15px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-color);
+            transition: width 0.4s ease-in-out;
+        }
+        
+        .subtopic-list {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 10px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .subtopic-list.active {
+            max-height: 500px; 
+        }
+
+        .subtopic-list li {
+            padding: 5px 0 5px 20px;
+            border-left: 2px solid var(--accent-color);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .subtopic-list input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+        /* Overlay to close menu when clicking outside */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="menu-button" onclick="toggleMenu()">☰</button>
+
+    <div class="overlay" onclick="toggleMenu()"></div>
+
+    <div class="subject-menu" id="subject-menu">
+        </div>
+
+    <header>
+        <h1>BAMS First Professional Study Accelerator ✨</h1>
+        <p>NCISM Syllabus Tracker for Padartha Vijnanam, Sharir, Samhita, and more.</p>
+    </header>
+
+    <div class="container">
+        <div id="content-area">
+            <h3 id="subject-heading">Select a Subject to View Topics</h3>
+            <div id="topic-list-container">
+                <p>Click the **☰ menu button** in the top left corner to open the subject list. Then, select a subject to see detailed topics and track your progress.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Structure for the BAMS Syllabus (Same as before)
+        const syllabus = {
+            "Padartha Vijnanam": [
+                { title: "Ayurveda Nirupana", chapters: ["Definition of Ayu (Life)", "Definition of Ayurveda", "Purpose of Ayurveda"] },
+                { title: "Darshana Nirupana", chapters: ["Introduction to Indian schools of thought", "Relevance of Darshanas to Ayurveda"] },
+                { title: "Padartha Vijnana", chapters: ["Dravya (Substance)", "Guna (Quality)", "Karma (Action)", "Samanya (Generality)", "Vishesha (Particularity)", "Samavaya (Inherence)"] },
+                { title: "Pramana Vijnana", chapters: ["Aptopadesha (Authoritative instruction)", "Pratyaksha (Direct Perception)", "Anumana (Inference)", "Yukti (Reasoning)"] },
+                { title: "Fundamental Principles", chapters: ["Pancha Mahabhuta (Five Great Elements)", "Triguna (Sattva, Rajas, Tamas)", "Role in the Body"] }
+            ],
+            "Sanskrit evam Ayurved Itihas": [
+                { title: "Basic Sanskrit Grammar", chapters: ["Varnas and Pronunciation", "Sandhi (Conjunction)", "Shabda (Declension)", "Dhatu (Conjugation)"] },
+                { title: "Applied Sanskrit", chapters: ["Translation of Key Shlokas", "Simple Sentence Formation"] },
+                { title: "History of Ayurveda", chapters: ["Origin and Evolution", "Mythological Period", "Historical Period"] },
+                { title: "Contribution of Acharyas", chapters: ["Charaka", "Sushruta", "Vagbhata", "Other Major Contributors"] },
+                { title: "Medical Systems", chapters: ["Traditional Systems", "Contemporary Systems"] }
+            ],
+            "Rachana Sharir (Anatomy)": [
+                { title: "Ayurvedic Anatomy Concepts", chapters: ["Asthi (Bones/Osteology)", "Sandhi (Joints/Arthrology)", "Peshi (Muscles/Myology)", "Sira, Dhamani, Strotas", "Kala (Membranes)"] },
+                { title: "Marmas and Indriyas", chapters: ["Detailed study of Marma (Vital Points)", "Indriya (Sense Organs)"] },
+                { title: "Garbha Sharir (Embryology)", chapters: ["Ayurvedic Concepts of Conception", "Masanaumasika Garbhavruddhi (Fetal Development)"] },
+                { title: "Modern Anatomy Systems", chapters: ["Osteology and Arthrology", "Muscular System", "Digestive and Respiratory Systems", "Cardiovascular System", "Nervous System and Sensory Organs"] },
+                { title: "Practical/Dissection", chapters: ["Cadaver Dissection Techniques", "Model Study and Identification"] }
+            ],
+            "Kriya Sharir (Physiology)": [
+                { title: "Tridosha Vijnana", chapters: ["Prakrita Karma (Normal Functions)", "Locations and Types of Doshas", "Dosha Assessment"] },
+                { title: "Dhatu Vijnana", chapters: ["Formation of Sapta Dhatus", "Function of Dhatus", "Pramana (Measurement) of Dhatus"] },
+                { title: "Mala, Agni, and Koshta", chapters: ["Trimala (Mutra, Purisha, Sweda)", "Agni (Biological Fire/Metabolism)", "Koshta (Alimentary Tract)"] },
+                { title: "Prakriti and Sara", chapters: ["Prakriti (Constitutional Type)", "Sara (Tissue Excellence)"] },
+                { title: "Modern Physiology Systems", chapters: ["Digestive and Respiratory Functions", "Cardiovascular System Physiology", "Endocrine and Nervous System Functions", "Basic Biochemistry"] },
+                { title: "Practical/Lab Work", chapters: ["Hematological Tests", "Biochemical Tests", "Physiological Demonstrations"] }
+            ],
+            "Samhita Adhyayan - I": [
+                { title: "Ashtanga Hridayam (Sutrasthana)", chapters: ["Chapters 1-5 (General Principles)", "Dinacharya (Daily Routine)", "Ritucharya (Seasonal Routine)", "Disease Prevention"] },
+                { title: "Charaka Samhita (Sutrasthana)", chapters: ["Chapters 1-4 (Basic Principles)", "Categories of Drugs", "Qualities of a Physician", "Essential Medical Concepts"] }
+            ]
+        };
+
+        const menuEl = document.getElementById('subject-menu');
+        const contentEl = document.getElementById('topic-list-container');
+        const headingEl = document.getElementById('subject-heading');
+        const overlayEl = document.querySelector('.overlay');
+
+        // --- Menu Toggle Function ---
+        window.toggleMenu = function() {
+            menuEl.classList.toggle('open');
+            overlayEl.style.display = menuEl.classList.contains('open') ? 'block' : 'none';
+        }
+
+
+        // --- Local Storage Functions (Same as before) ---
+        function loadProgress() {
+            const progress = localStorage.getItem('bamsProgress');
+            return progress ? JSON.parse(progress) : {};
+        }
+
+        function saveProgress(progress) {
+            localStorage.setItem('bamsProgress', JSON.stringify(progress));
+        }
+
+        // --- Core Rendering Functions ---
+
+        // 1. Render the Subject Menu Cards
+        function renderSubjectMenu() {
+            menuEl.innerHTML = '';
+            Object.keys(syllabus).forEach(subjectName => {
+                const card = document.createElement('div');
+                card.className = 'subject-card';
+                card.innerHTML = `<h2>${subjectName}</h2>`;
+                card.setAttribute('data-subject', subjectName);
+                card.onclick = () => {
+                    renderTopics(subjectName);
+                    toggleMenu(); // Close the menu after selecting
+                    highlightActiveSubject(card);
+                };
+                menuEl.appendChild(card);
+            });
+        }
+        
+        // 2. Highlight the active subject card
+        function highlightActiveSubject(activeCard) {
+            document.querySelectorAll('.subject-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            activeCard.classList.add('active');
+        }
+
+        // 3. Render Topics and Progress Bars for a selected Subject
+        function renderTopics(subjectName) {
+            headingEl.textContent = `${subjectName} - Topics & Progress`;
+            contentEl.innerHTML = '';
+            const progress = loadProgress();
+
+            syllabus[subjectName].forEach((topic, topicIndex) => {
+                const topicKey = `${subjectName}_${topicIndex}`;
+                
+                // Get or initialize progress for this topic
+                const topicProgress = progress[topicKey] || Array(topic.chapters.length).fill(false);
+                progress[topicKey] = topicProgress; 
+                
+                const completedCount = topicProgress.filter(c => c).length;
+                const totalCount = topic.chapters.length;
+                const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+                const topicContainer = document.createElement('div');
+                topicContainer.className = 'topic-container';
+                
+                // Topic Header and Progress Bar
+                topicContainer.innerHTML = `
+                    <div class="topic-header" onclick="toggleSubtopics(this)">
+                        <span class="topic-title">${topic.title}</span>
+                        <div style="display: flex; align-items: center;">
+                            <span style="font-size: 0.9em; margin-right: 5px;">${percentage}%</span>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: ${percentage}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Subtopic/Chapter List
+                const subtopicList = document.createElement('ul');
+                subtopicList.className = 'subtopic-list';
+
+                topic.chapters.forEach((chapter, chapterIndex) => {
+                    const listItem = document.createElement('li');
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = topicProgress[chapterIndex];
+                    checkbox.setAttribute('data-topic-key', topicKey);
+                    checkbox.setAttribute('data-chapter-index', chapterIndex);
+                    
+                    // Add event listener to update progress on change
+                    checkbox.onchange = (e) => updateProgress(e, subjectName);
+
+                    listItem.appendChild(checkbox);
+                    listItem.appendChild(document.createTextNode(chapter));
+                    subtopicList.appendChild(listItem);
+                });
+
+                topicContainer.appendChild(subtopicList);
+                contentEl.appendChild(topicContainer);
+            });
+            
+            saveProgress(progress); // Save the initialised progress
+        }
+        
+        // Function to expand/collapse subtopics
+        window.toggleSubtopics = function(header) {
+            const list = header.parentElement.querySelector('.subtopic-list');
+            list.classList.toggle('active');
+        }
+
+        // 4. Update Progress on Checkbox Change
+        function updateProgress(event, subjectName) {
+            const checkbox = event.target;
+            const topicKey = checkbox.getAttribute('data-topic-key');
+            const chapterIndex = parseInt(checkbox.getAttribute('data-chapter-index'));
+            const isChecked = checkbox.checked;
+
+            const progress = loadProgress();
+            if (progress[topicKey]) {
+                progress[topicKey][chapterIndex] = isChecked;
+                saveProgress(progress);
+                renderTopics(subjectName); // Re-render to update the progress bar
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSubjectMenu();
+        });
+
+    </script>
+
+</body>
+</html>

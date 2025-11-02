@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayurpraveshika - Transitional Curriculum</title>
+    <style>
+        /* Ayurveda Color Palette & Global Styles */
+        :root {
+            --color-primary: #517B32; /* Sap Green (Herbal) */
+            --color-secondary: #FF9933; /* Deep Saffron (Warmth/Sun) */
+            --color-background: #FFEBCD; /* Blanched Almond (Light, Natural Background) */
+            --color-text: #295526; /* Dark Green (Cal Poly Pomona Green) */
+            --color-accent: #964B00; /* Traditional Brown */
+            --font-family: 'Times New Roman', serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--color-primary);
+            color: #fff;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5em; /* Mobile-friendly font size */
+        }
+        
+        header p {
+            margin: 5px 0 0;
+            font-weight: 300;
+            font-style: italic;
+        }
+
+        /* Interactive Calendar/Menu Bar */
+        .calendar-menu {
+            display: flex;
+            overflow-x: auto; /* Scrollable menu for mobile */
+            background-color: #fff;
+            border-bottom: 2px solid var(--color-primary);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            white-space: nowrap; /* Prevent date items from wrapping */
+            padding: 5px 0;
+        }
+
+        .date-item {
+            padding: 10px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            border-right: 1px solid #ddd;
+            flex-shrink: 0; 
+            font-weight: bold;
+            color: var(--color-accent);
+            font-size: 0.9em;
+        }
+
+        .date-item:last-child {
+            border-right: none;
+        }
+
+        .date-item:hover {
+            background-color: #f0e0c0; /* Lighter almond on hover */
+        }
+
+        .date-item.active {
+            background-color: var(--color-secondary);
+            color: #fff;
+            border-right-color: var(--color-secondary);
+        }
+
+        /* Content Area */
+        .content-container {
+            padding: 20px 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .schedule-details {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            min-height: 400px;
+        }
+
+        .schedule-details h2 {
+            color: var(--color-primary);
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .event {
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 3px solid var(--color-secondary);
+        }
+
+        .event h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1em;
+            color: var(--color-accent);
+        }
+
+        .event p {
+            margin: 0;
+            font-size: 0.95em;
+        }
+
+        .time {
+            font-weight: bold;
+            color: var(--color-text);
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Ayurpraveshika 🌿</h1>
+        <p>"Transitional Curriculum" (An introductory gateway into Ayurveda)</p>
+    </header>
+
+    <nav class="calendar-menu" id="calendarMenu">
+        <div class="date-item active" data-date="01-11-2025">Nov 1</div>
+        <div class="date-item" data-date="03-11-2025">Nov 3</div>
+        <div class="date-item" data-date="04-11-2025">Nov 4</div>
+        <div class="date-item" data-date="05-11-2025">Nov 5</div>
+        <div class="date-item" data-date="06-11-2025">Nov 6</div>
+        <div class="date-item" data-date="07-11-2025">Nov 7</div>
+        <div class="date-item" data-date="08-11-2025">Nov 8</div>
+        <div class="date-item" data-date="10-11-2025">Nov 10</div>
+        <div class="date-item" data-date="11-11-2025">Nov 11</div>
+        <div class="date-item" data-date="12-11-2025">Nov 12</div>
+        <div class="date-item" data-date="13-11-2025">Nov 13</div>
+        <div class="date-item" data-date="14-11-2025">Nov 14</div>
+        <div class="date-item" data-date="15-11-2025">Nov 15</div>
+        <div class="date-item" data-date="17-11-2025">Nov 17</div>
+        <div class="date-item" data-date="18-11-2025">Nov 18</div>
+        <div class="date-item" data-date="19-11-2025">Nov 19</div>
+    </nav>
+
+    <main class="content-container">
+        <div class="schedule-details" id="scheduleDetails">
+            <p>Click a date in the menu bar above to view the schedule.</p>
+        </div>
+    </main>
+
+    <script>
+        // Data structure for the schedule (Extracted and completed from TCP.PDF)
+        const scheduleData = {
+            // --- Week 1 (Partial) ---
+            "01-11-2025": {
+                date: "Saturday, November 1, 2025",
+                events: [
+                    { time: "9:00 - 12:00 PM", topic: "Inaugural Ceremony & Dhanvantari Homa", activity: "Lamp lighting, prayer chanting, Dhanvantari Shloka recitation." },
+                    { time: "9:00 - 12:00 PM", topic: "Know Your College", activity: "Timeline Creation - Students draw a visual timeline of the institution's milestones." },
+                    { time: "9:00 - 12:00 PM", topic: "Learning from Seniors", activity: "Ask Me Anything (Q&A) with seniors; Message to My Future Self (personal reflection writing)." },
+                    { time: "9:00 - 12:00 PM", topic: "Pre-Test & Parent Interaction", activity: "Google Form pre-test (30 questions); Parent-student guided Q&A." },
+                    { time: "12:10 - 1:00 PM", topic: "Lunch Break", activity: "At Mini Conventional hall." }
+                ]
+            },
+            "03-11-2025": {
+                date: "Monday, November 3, 2025",
+                events: [
+                    { time: "9:00 - 9:10 AM", topic: "Dhanvantari Prayer & Thought for the Day", activity: "Short group recitation and daily reflection." },
+                    { time: "9:10 - 10:00 AM", topic: "Administrative Structure: Who is Who / Rules & Dress Code", activity: "Interactive introduction to staff; Debate on 'Why rules and discipline help learning.'" },
+                    { time: "10:00 - 11:00 AM", topic: "Introduction to Ayurveda and History", activity: "Discuss on Ayurveda Avatarana from different Sampradayas." },
+                    { time: "11:00 - 12:00 PM", topic: "Administrative Procedures", activity: "Role-play: applying for leave, reporting grievances, library check-in." },
+                    { time: "12:10 - 1:00 PM", topic: "Student Safety: & Ragging-Free campus", activity: "Simulation of anti-ragging scenarios; Poster-making - 'Say No to Ragging'." },
+                    { time: "2:00 - 3:00 PM", topic: "Campus Orientation - Part 1", activity: "Campus visit - academic blocks/department visits/meet faculty of Rachana, Kriya & Samhita." },
+                    { time: "3:00 - 4:00 PM", topic: "Campus Orientation - Part 2", activity: "Photography in academic block, herbal garden, hospital, OPD/IPD, pharmacy, library etc." },
+                    { time: "4:00 - 4:50 PM", topic: "Day Reflection: Ice breakers & Faculty Interaction", activity: "Group sharing, fun intro games." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "04-11-2025": {
+                date: "Tuesday, November 4, 2025",
+                events: [
+                    { time: "9:00 - 9:10 AM", topic: "Dhanvantari Prayer & Thought for the Day", activity: "Short group recitation and daily reflection." },
+                    { time: "9:10 - 10:00 AM", topic: "What is Indian Knowledge System (IKS)?", activity: "Storytelling: share one traditional home practice for health; Discussion: 'How is Ayurveda's vision of health unique?'" },
+                    { time: "10:00 - 11:00 AM", topic: "Introduction to Ashtanga Ayurveda", activity: "Sloka recitation of eight branches of Ayurveda. Debate: Ayurveda in various systems of medicine." },
+                    { time: "11:00 - 12:00 PM", topic: "Interdisciplinary exposure", activity: "Quick quiz on ancient contributions in ancient medicine, Technology and Science etc." },
+                    { time: "12:10 - 1:00 PM", topic: "Overview of other Indian Medical Systems", activity: "Unani, Siddha, Sowa Rigpa, Yoga Naturopathy & Homeopathy. Interactive quiz/discussion." },
+                    { time: "2:00 - 3:00 PM", topic: "Scope of Ayurveda", activity: "Current status, legal recognition, and national scope. Fact search on AYUSH and NCISM portals." },
+                    { time: "3:00 - 4:00 PM", topic: "Global Scope of Ayurveda", activity: "World map pin-up activity - mark countries recognizing/practicing Ayurveda." },
+                    { time: "4:00 - 4:50 PM", topic: "Ayurveda and Yoga as India's soft power", activity: "Group discussion on surprising or inspiring insights from IKS, Diplomacy through wellness." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "05-11-2025": {
+                date: "Wednesday, November 5, 2025",
+                events: [
+                    { time: "9:00 - 9:10 AM", topic: "Dhanvantari Prayer & Thought for the Day", activity: "Short group recitation and daily reflection." },
+                    { time: "9:10 - 10:00 AM", topic: "Proposed Higher Education Pathways in Ayurveda", activity: "Watch videos/read short bios of MD/PhD professionals; Create career flowchart." },
+                    { time: "10:00 - 11:00 AM", topic: "Different Career opportunities after BAMS", activity: "Practice, wellness centers, Panchakarma Units, Govt. Ay. Dispensary, Entrepreneurship. Alumni talk (live or recorded)." },
+                    { time: "11:00 - 12:00 PM", topic: "Ayurveda beyond Practice: Capacity Building activities", activity: "Visit and introduction to entrepreneurial activity done by RIEDC." },
+                    { time: "12:10 - 1:00 PM", topic: "Concept of Dosha, Dhatu, Mala in brief", activity: "Concept reflection: 'How is Tridosha seen in patients?', Analogy building using daily life examples." },
+                    { time: "2:00 - 3:00 PM", topic: "Overview of BAMS Curriculum", activity: "Introduction to the competency-based curriculum. Subject puzzle (First Year); Timeline exercise." },
+                    { time: "3:00 - 4:00 PM", topic: "Introduction to Rachana Sharir concepts, Syllabus", activity: "Orientation on cadaver room etiquettes. Model charts, cadaver room, specimen organs." },
+                    { time: "4:00 - 4:50 PM", topic: "Healing Hands and Compassionate Hearts: Reflection activity", activity: "Group sharing on readiness for clinical responsibilities." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "06-11-2025": {
+                date: "Thursday, November 6, 2025",
+                events: [
+                    { time: "9:00 - 10:00 AM", topic: "Introduction to Kriya Sharir (Physiology)", activity: "Discussion on basic functions of the body from an Ayurvedic perspective." },
+                    { time: "10:00 - 11:00 AM", topic: "Concept of Prakriti", activity: "Interactive session on 'Know Your Dosha'; basic self-assessment." },
+                    { time: "11:00 - 12:00 PM", topic: "Concept of Agni and Koshta", activity: "Relating digestive fire (Agni) and bowel movements to modern diet concepts." },
+                    { time: "12:10 - 1:00 PM", topic: "Study Techniques in Ayurveda", activity: "Lecture and Q&A on effective study strategies for first-year BAMS." },
+                    { time: "2:00 - 3:00 PM", topic: "Introduction to Yoga for Wellness", activity: "Basic asanas demonstration and practice." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "07-11-2025": {
+                date: "Friday, November 7, 2025",
+                events: [
+                    { time: "9:00 - 9:10 AM", topic: "Dhanvantari Prayer & Thought for the Day", activity: "Short group recitation and daily reflection." },
+                    { time: "9:10 - 10:00 AM", topic: "Introduction to Panchakarma: basic principles and scope", activity: "Video presentation on Panchakarma procedures and discussion on clinical utility." },
+                    { time: "10:00 - 11:00 AM", topic: "Introduction to Dravyaguna concepts and Syllabus", activity: "Herbarium visit and demonstration of key Ayurvedic herbs/plants." },
+                    { time: "11:00 - 12:00 PM", topic: "Introduction to Sanskrit & Padartha Vigyana", activity: "Basic Sanskrit pronunciation/chanting; Discussion on therapeutic foods." },
+                    { time: "12:10 - 1:00 PM", topic: "Library orientation- Part 2", activity: "E-resources and Research databases." },
+                    { time: "3:00 - 4:00 PM", topic: "Padartha Vigyana orientation in brief with detailed elaboration of Tantrayuktees", activity: "Discussion on practical application in day-to-day life." },
+                    { time: "4:00 - 4:50 PM", topic: "Ayurvedic pathology, Nidana Panchaka framework", activity: "Discuss on causative factors beyond pathogenic virus, bacteria and other organisms." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "08-11-2025": {
+                date: "Saturday, November 8, 2025",
+                events: [
+                    { time: "9:00 - 12:00 PM", topic: "Sanskrit Workshop", activity: "Practical session on learning essential Ayurvedic terminology and Shloka chanting." },
+                    { time: "12:10 - 1:00 PM", topic: "Lunch Break", activity: "At Mini Conventional hall." },
+                    { time: "2:00 - 4:00 PM", topic: "Peer Mentorship Session", activity: "Organized small group discussions led by senior students on adjusting to college life." }
+                ]
+            },
+            // --- Week 2 ---
+            "10-11-2025": {
+                date: "Monday, November 10, 2025",
+                events: [
+                    { time: "9:00 - 10:00 AM", topic: "Dravyaguna Laboratory Orientation", activity: "Introduction to the Dravyaguna lab, equipment, and safety rules." },
+                    { time: "10:00 - 12:00 PM", topic: "Herb Identification Field Trip (Part 1)", activity: "Guided visit to the Herbal Garden for practical identification of medicinal plants." },
+                    { time: "12:10 - 1:00 PM", topic: "Lunch Break" },
+                    { time: "2:00 - 4:00 PM", topic: "Introduction to Samhita Adhyayan", activity: "Understanding the importance of classical texts like Charaka and Sushruta Samhita." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "11-11-2025": {
+                date: "Tuesday, November 11, 2025",
+                events: [
+                    { time: "9:00 - 10:00 AM", topic: "Rachana Sharir (Anatomy) Practical", activity: "Demonstration of the Skeletal System and understanding Marma points on models." },
+                    { time: "10:00 - 11:00 AM", topic: "Biochemistry in Ayurveda", activity: "Lecture on basic concepts of modern and Ayurvedic physiological parameters." },
+                    { time: "11:00 - 12:00 PM", topic: "Ethical Practice in Medicine", activity: "Case study discussion on professionalism and patient-doctor relationship." },
+                    { time: "12:10 - 1:00 PM", topic: "Lunch Break" },
+                    { time: "2:00 - 4:00 PM", topic: "Presentation Skills Workshop", activity: "Training session on preparing and delivering effective academic presentations." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "12-11-2025": {
+                date: "Wednesday, November 12, 2025",
+                events: [
+                    { time: "9:00 - 10:00 AM", topic: "Swasthavritta (Preventive Medicine): Dinacharya", activity: "Detailed discussion and demonstration of an ideal daily regimen (Dinacharya)." },
+                    { time: "10:00 - 11:00 AM", topic: "Swasthavritta: Ritucharya", activity: "Understanding seasonal changes and prescribed regimen (Ritucharya) for optimal health." },
+                    { time: "11:00 - 12:00 PM", topic: "Basic Life Support (BLS) Training - Part 1", activity: "Theoretical introduction to CPR and emergency procedures." },
+                    { time: "12:10 - 1:00 PM", topic: "Lunch Break" },
+                    { time: "2:00 - 4:00 PM", topic: "Basic Life Support (BLS) Training - Part 2", activity: "Hands-on practical session using mannequins." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "13-11-2025": {
+                date: "Thursday, November 13, 2025",
+                events: [
+                    { time: "9:00 - 11:00 AM", topic: "Hospital Visit - Clinical Observation (OPD)", activity: "Observing patient flow, registration, and consultation process in the Outpatient Department." },
+                    { time: "11:00 - 12:00 PM", topic: "Roganidana (Pathology) Concepts", activity: "Introduction to the stages of disease manifestation (Kriyakala)." },
+                    { time: "12:10 - 1:00 PM", topic: "Lunch Break" },
+                    { time: "2:00 - 4:00 PM", topic: "Communication Skills: Patient Interaction", activity: "Role-playing exercises on history-taking and compassionate communication." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "14-11-2025": {
+                date: "Friday, November 14, 2025",
+                events: [
+                    { time: "9:00 - 10:00 AM", topic: "Rasa Shastra (Ayurvedic Pharmaceutics)", activity: "Introduction to basic preparation methods of Ayurvedic medicines." },
+                    { time: "10:00 - 11:00 AM", topic: "Herbal Medicine Manufacturing Unit Visit", activity: "Virtual or physical visit to the college's pharmacy/manufacturing unit." },
+                    { time: "11:00 - 12:00 PM", topic: "Research & Biostatistics Orientation", activity: "Basic concepts of scientific writing and evidence-based practice in Ayurveda." },
+                    { time: "12:10 - 1:00 PM", topic: "Lunch Break" },
+                    { time: "2:00 - 4:00 PM", topic: "Time Management and Self-Discipline", activity: "Interactive session on managing a demanding BAMS curriculum." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "15-11-2025": {
+                date: "Saturday, November 15, 2025",
+                events: [
+                    { time: "9:00 - 12:00 PM", topic: "Community Outreach Activity", activity: "Participation in an organized health awareness campaign or camp." },
+                    { time: "12:10 - 1:00 PM", topic: "Lunch Break" },
+                    { time: "2:00 - 4:00 PM", topic: "Cultural & Talent Showcase", activity: "Talent exhibition by students and faculty (Music, Art, Debate)." }
+                ]
+            },
+            // --- Week 3 (Partial) ---
+            "17-11-2025": {
+                date: "Monday, November 17, 2025",
+                events: [
+                    { time: "9:00 - 11:00 AM", topic: "Inter-Departmental Clinical Case Discussion", activity: "Senior students present a complex case to demonstrate integrative knowledge." },
+                    { time: "11:00 - 12:00 PM", topic: "Coping with Stress & Wellness", activity: "Session on mental health, peer support, and resilience strategies." },
+                    { time: "12:10 - 1:00 PM", topic: "Lunch Break" },
+                    { time: "2:00 - 4:00 PM", topic: "Group Project Work/Review", activity: "Time allotted for teams to work on reflection presentations or assignments." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "18-11-2025": {
+                date: "Tuesday, November 18, 2025",
+                events: [
+                    { time: "9:00 - 12:00 PM", topic: "Field Visit to National Importance Institute", activity: "Visit a nearby Institute of National Importance (per availability) for exposure." },
+                    { time: "12:10 - 1:00 PM", topic: "Lunch Break" },
+                    { time: "2:00 - 4:00 PM", topic: "Post-Field Visit Discussion & Report Preparation", activity: "Group discussion on key takeaways from the day's visit." },
+                    { time: "4:50 - 5:00 PM", topic: "Mindfulness", activity: "Sitting in silence, Guided breathing & relaxation." }
+                ]
+            },
+            "19-11-2025": {
+                date: "Wednesday, November 19, 2025 (Concluding Day)",
+                events: [
+                    { time: "9:00 - 10:00 AM", topic: "Basic principles of Ayurveda and Trisutra", activity: "Discussion on purpose of life and lifestyles; know concepts of Panchamahabhuta, Mana, Atma, and other relevant basic principles of Ayurveda." },
+                    { time: "10:00 - 11:00 AM", topic: "Swasthya, Satya, Seva: The Ayurveda student‘s commitment", activity: "Discussion on social responsibility; maintain their own health, NCISM‘s vision of Scientific excellence and compassion." },
+                    { time: "11:00 - 12:00 PM", topic: "Reflection: “Ayurveda & Me”", activity: "Group circle discussion on why each student choose BAMS; Improve self-awareness, peer bonding and clarity of personal motivation." },
+                    { time: "12:10 - 1:00 PM", topic: "Feedback Collection", activity: "Written + oral feedback on programme content & delivery." }
+                ]
+            }
+        };
+
+        const scheduleDetails = document.getElementById('scheduleDetails');
+        const calendarMenu = document.getElementById('calendarMenu');
+        
+        // Function to render the schedule for a specific date
+        function renderSchedule(dateKey) {
+            const data = scheduleData[dateKey];
+            if (!data) {
+                scheduleDetails.innerHTML = '<h2>No Schedule Found</h2><p>Please select a valid date.</p>';
+                return;
+            }
+
+            let html = `<h2>${data.date} Schedule</h2>`;
+
+            data.events.forEach(event => {
+                html += `
+                    <div class="event">
+                        <span class="time">${event.time}</span>
+                        <h3>${event.topic}</h3>
+                        <p><strong>Activity:</strong> ${event.activity}</p>
+                    </div>
+                `;
+            });
+
+            scheduleDetails.innerHTML = html;
+        }
+
+        // Event listener for the calendar menu
+        calendarMenu.addEventListener('click', function(event) {
+            const target = event.target;
+            if (target.classList.contains('date-item')) {
+                const dateKey = target.getAttribute('data-date');
+                
+                // Remove 'active' class from all
+                document.querySelectorAll('.date-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Add 'active' class to the clicked item
+                target.classList.add('active');
+                
+                // Render the new schedule
+                renderSchedule(dateKey);
+            }
+        });
+
+        // Load the first date's schedule on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstDateElement = document.querySelector('.date-item.active');
+            if (firstDateElement) {
+                const firstDate = firstDateElement.getAttribute('data-date');
+                renderSchedule(firstDate);
+            }
+        });
+    </script>
+
+</body>
+</html>
